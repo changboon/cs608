@@ -27,7 +27,7 @@ holdout = cornac.data.Reader().read(fpath='./cs608_ip_probe_v2.csv', sep=",", fm
 ratio_split = cornac.eval_methods.RatioSplit(data=train, test_size=0.2, rating_threshold=1.0, seed=123)
 
 eval_method = BaseMethod.from_splits(
-    train_data=train,  test_data=test, val_data=holdout, exclude_unknowns=False, verbose=True, seed=123
+    train_data=train,  test_data=test, val_data=holdout, exclude_unknowns=True, verbose=True, seed=123
 )
 
 cv = cornac.eval_methods.cross_validation.CrossValidation(
