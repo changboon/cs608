@@ -19,8 +19,8 @@ random.seed(123)
 data = cornac.data.Reader().read(fpath='./cs608_ip_train_v2.csv', sep=",", fmt='UIR', skip_lines=1)
 random.shuffle(data)
 
-train = data[:math.ceil(0.2*len(data))]
-test = data[math.ceil(0.2*len(data)):]
+train = data[math.ceil(0.2*len(data)):]
+test = data[:math.ceil(0.2*len(data))]
 
 holdout = cornac.data.Reader().read(fpath='./cs608_ip_probe_v2.csv', sep=",", fmt='UIR', skip_lines=1)
 
@@ -100,7 +100,7 @@ pickle.dump( mapping, open( "./wmf/mapping.pkl", "wb" ) )
 with open("./wmf/submission.txt", "w") as f:
     item_idx2id = list(rs_wmf.best_model.train_set.item_ids)
     item_id2idx = rs_wmf.best_model.train_set.uid_map
-    last_ok = item_id2idx["0"]
+    last_ok = item_id2idx["1"]
     for i in range(9402):
         try:
             user = item_id2idx[str(i+1)]
