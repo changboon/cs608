@@ -34,14 +34,6 @@ cv = cornac.eval_methods.cross_validation.CrossValidation(
     data, n_folds=3, rating_threshold=1.0, seed=123, exclude_unknowns=True, verbose=True)
 
 
-# In[3]:
-
-
-mf = cornac.models.MF(k=10, max_iter=25, learning_rate=0.01, lambda_reg=0.02, use_bias=True, seed=123)
-pmf = cornac.models.PMF(k=10, max_iter=100, learning_rate=0.001, lambda_reg=0.001, seed=123)
-bpr = cornac.models.BPR(k=10, max_iter=200, learning_rate=0.001, lambda_reg=0.01, seed=123)
-
-
 # In[24]:
 
 
@@ -71,7 +63,7 @@ rs_wmf = RandomSearch(
         Continuous('b', low=0.0, high=2e-1),
     ],
     metric=f1,
-    eval_method=cv,
+    eval_method=eval_method,
     n_trails=30,
 )
 
@@ -80,7 +72,7 @@ rs_wmf = RandomSearch(
 
 
 cornac.Experiment(
-  eval_method=cv,
+  eval_method=eval_method,
   models=[rs_wmf],
   metrics=[mae, rmse, recall, ndcg, auc, mAP, f1],
   user_based=True
@@ -105,7 +97,7 @@ pickle.dump( mapping, open( "./wmf/mapping.pkl", "wb" ) )
 # In[18]:
 
 
-with open("submission.txt", "w") as f:
+with open("./wmf/submission.txt", "w") as f:
     item_idx2id = list(rs_wmf.best_model.train_set.item_ids)
     item_id2idx = rs_wmf.best_model.train_set.uid_map
     last_ok = item_id2idx["0"]
