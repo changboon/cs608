@@ -50,7 +50,7 @@ f1 = cornac.metrics.FMeasure(k=50)
 # In[25]:
 
 
-nmf = cornac.models.ncf.recom_neumf.NeuMF(name='NeuMF', num_factors=8, layers=(64, 32, 16, 8), act_fn='relu', reg_layers=(0.0, 0.0, 0.0, 0.0), num_epochs=20, batch_size=256, num_neg=4, lr=0.001, learner='adam', early_stopping=0.01, trainable=True, verbose=False, seed=123)
+nmf = cornac.models.ncf.recom_neumf.NeuMF(name='NeuMF', num_factors=8, layers=(64, 32, 16, 8), act_fn='relu', reg_layers=(0.0, 0.0, 0.0, 0.0), num_epochs=20, batch_size=256, num_neg=4, lr=0.001, learner='adam', early_stopping={'min_delta': 0.01, 'patience': 5}, trainable=True, verbose=False, seed=123)
 
 rs_nmf = RandomSearch(
     model=nmf,
