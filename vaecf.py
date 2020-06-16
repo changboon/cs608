@@ -10,6 +10,7 @@ from cornac.eval_methods import BaseMethod
 from cornac.hyperopt import Discrete, Continuous
 from cornac.hyperopt import RandomSearch
 import random, math
+from custom_metric import HarmonicMean
 
 
 # In[21]:
@@ -42,9 +43,11 @@ rmse = cornac.metrics.RMSE()
 prec = cornac.metrics.Precision(k=50)
 recall = cornac.metrics.Recall(k=50)
 ndcg = cornac.metrics.NDCG(k=50)
+ncrr = cornac.metrics.NCRR(k=50)
 auc = cornac.metrics.AUC()
 mAP = cornac.metrics.MAP()
 f1 = cornac.metrics.FMeasure(k=50)
+hm = HarmonicMean(recall, ndcg, ncrr)
 
 
 # In[25]:
@@ -72,7 +75,7 @@ rs = RandomSearch(
 cornac.Experiment(
   eval_method=eval_method,
   models=[rs],
-  metrics=[mae, rmse, recall, ndcg, auc, mAP, f1],
+  metrics=[mae, rmse, recall, ndcg, ncrr, auc, mAP, f1],
   user_based=True,
   save_dir=GLOBAL_DIR,
 ).run()
