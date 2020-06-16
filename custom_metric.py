@@ -1,3 +1,6 @@
+from cornac.metrics.ranking import RankingMetric
+import numpy as np
+
 class HarmonicMean(RankingMetric):
     
 
@@ -88,4 +91,4 @@ class HarmonicMean(RankingMetric):
         recall = tp / tp_fn
 
 
-        return recall * self.w_recall + ndcg * self.w_ndcg + ndrr * self.w_ncrr
+        return recall * self.w_recall + ndcg * self.w_ndcg + ncrr * self.w_ncrr

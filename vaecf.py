@@ -65,7 +65,7 @@ rs = RandomSearch(
     ],
     metric=hm,
     eval_method=eval_method,
-    n_trails=60,
+    n_trails=100,
 )
 
 
