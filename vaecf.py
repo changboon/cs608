@@ -47,7 +47,7 @@ ncrr = cornac.metrics.NCRR(k=50)
 auc = cornac.metrics.AUC()
 mAP = cornac.metrics.MAP()
 f1 = cornac.metrics.FMeasure(k=50)
-hm = HarmonicMean(recall, ndcg, ncrr)
+hm = HarmonicMean(k=50)
 
 
 # In[25]:
@@ -63,7 +63,7 @@ rs = RandomSearch(
         Continuous("beta", low=0.8, high=1.3),
         Continuous("learning_rate", low=1e-4, high=1e-2),
     ],
-    metric=f1,
+    metric=hm,
     eval_method=eval_method,
     n_trails=60,
 )
@@ -75,7 +75,7 @@ rs = RandomSearch(
 cornac.Experiment(
   eval_method=eval_method,
   models=[rs],
-  metrics=[mae, rmse, recall, ndcg, ncrr, auc, mAP, f1],
+  metrics=[mae, rmse, recall, ndcg, ncrr, auc, mAP, f1, hm],
   user_based=True,
   save_dir=GLOBAL_DIR,
 ).run()
