@@ -75,7 +75,7 @@ hpf = cornac.models.hpf.recom_hpf.HPF(name="HPF")
 #hft = cornac.models.hft.recom_hft.HFT(name='HFT', seed=123) #not-working with current data format
 wbpr = cornac.models.bpr.recom_wbpr.WBPR(name='WBPR', seed=123)
 #ctr = cornac.models.ctr.recom_ctr.CTR(name='CTR', seed=123) #not-working with current data format
-bpr = cornac.models.bpr.recom_bo(name='Baseline')
+bo = cornac.models.baseline_only.recom_bo(name='Baseline')
 bpr = cornac.models.bpr.recom_bpr.BPR(name='BPR', seed=123)
 ga = cornac.models.global_avg.recom_global_avg.GlobalAvg(name='GlobalAvg')
 iknn = cornac.models.knn.recom_knn.ItemKNN(name='ItemKNN', seed=123)
