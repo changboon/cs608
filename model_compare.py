@@ -51,30 +51,31 @@ f1 = cornac.metrics.FMeasure(k=50)
 # In[25]:
 
 
-c2pf = cornac.models.c2pf.recom_c2pf.C2PF(name='C2PF', seed=123)
-mter = cornac.models.mter.recom_mter.MTER(name="MTER", seed=123)
-pcrl = cornac.models.pcrl.recom_pcrl.PCRL(name="PCRL", seed=123)
+#c2pf = cornac.models.c2pf.recom_c2pf.C2PF(name='C2PF') #not-working with current data format
+#mter = cornac.models.mter.recom_mter.MTER(name="MTER", seed=123) #not-working with current data format
+#pcrl = cornac.models.pcrl.recom_pcrl.PCRL(name="PCRL") #not-working with current data format
 vaecf = cornac.models.vaecf.recom_vaecf.VAECF(name="VAECF", seed=123)
-cvae = cornac.models.cvae.recom_cvae.CVAE(name='CVAE', seed=123)
+#cvae = cornac.models.cvae.recom_cvae.CVAE(name='CVAE', seed=123) #not-working with current data format
 gmf = cornac.models.ncf.recom_gmf.GMF(name='GMF', seed=123)
 ibpr = cornac.models.ibpr.recom_ibpr.IBPR(name="IBPR")
-mcf = cornac.models.mcf.recom_mcf.MCF(name='MCF', seed=123)
+#mcf = cornac.models.mcf.recom_mcf.MCF(name='MCF', seed=123) #not-working with current data format
 mlp = cornac.models.ncf.recom_mlp.MLP(name='MLP', seed=123)
 neumf = cornac.models.ncf.recom_neumf.NeuMF(name='NeuMF', seed=123)
 oibpr = cornac.models.online_ibpr.recom_online_ibpr.OnlineIBPR(name="OnlineIBPR")
-vmf = cornac.models.vmf.recom_vmf.VMF(name='VMF', seed=123)
-cdr = cornac.models.cdr.recom_cdr.CDR(name='CDR', seed=123)
-coe = cornac.models.coe.recom_coe.COE(name="COE")
-convmf = cornac.models.conv_mf.recom_convmf.ConvMF(name='ConvMF', seed=123)
-skmeans = cornac.models.skm.recom_skmeans.SKMeans(name="SKMeans")
-vbpr = cornac.models.vbpr.recom_vbpr.VBPR(name='VBPR', seed=123)
-cdl = cornac.models.cdl.recom_cdl.CDL(name='CDL', seed=123)
+#vmf = cornac.models.vmf.recom_vmf.VMF(name='VMF', seed=123) #not-working with current data format
+#cdr = cornac.models.cdr.recom_cdr.CDR(name='CDR', seed=123) #not-working with current data format
+#coe = cornac.models.coe.recom_coe.COE(name="COE") #not-working with current data format
+#convmf = cornac.models.conv_mf.recom_convmf.ConvMF(name='ConvMF', seed=123) #not-working with current data format
+#skmeans = cornac.models.skm.recom_skmeans.SKMeans(name="SKMeans") #not-working with current data format
+#vbpr = cornac.models.vbpr.recom_vbpr.VBPR(name='VBPR', seed=123) #not-working with current data format
+#cdl = cornac.models.cdl.recom_cdl.CDL(name='CDL', seed=123) #not-working with current data format
 hpf = cornac.models.hpf.recom_hpf.HPF(name="HPF")
-efm = cornac.models.efm.recom_efm.EFM(name='EFM', seed=123)
-sbpr = cornac.models.sbpr.recom_sbpr.SBPR(name='SBPR', seed=123)
-hft = cornac.models.hft.recom_hft.HFT(name='HFT', seed=123)
+#efm = cornac.models.efm.recom_efm.EFM(name='EFM', seed=123) #not-working with current data format
+#sbpr = cornac.models.sbpr.recom_sbpr.SBPR(name='SBPR', seed=123) #not-working with current data format
+#hft = cornac.models.hft.recom_hft.HFT(name='HFT', seed=123) #not-working with current data format
 wbpr = cornac.models.bpr.recom_wbpr.WBPR(name='WBPR', seed=123)
-ctr = cornac.models.ctr.recom_ctr.CTR(name='CTR', seed=123)
+#ctr = cornac.models.ctr.recom_ctr.CTR(name='CTR', seed=123) #not-working with current data format
+bpr = cornac.models.bpr.recom_bo(name='Baseline')
 bpr = cornac.models.bpr.recom_bpr.BPR(name='BPR', seed=123)
 ga = cornac.models.global_avg.recom_global_avg.GlobalAvg(name='GlobalAvg')
 iknn = cornac.models.knn.recom_knn.ItemKNN(name='ItemKNN', seed=123)
@@ -84,15 +85,14 @@ mp = cornac.models.most_pop.recom_most_pop.MostPop(name='MostPop')
 nmf = cornac.models.nmf.recom_nmf.NMF(name='NMF', seed=123)
 pmf = cornac.models.pmf.recom_pmf.PMF(name='PMF', seed=123)
 svd = cornac.models.svd.recom_svd.SVD(name='SVD', seed=123)
-sorec = cornac.models.sorec.recom_sorec.SoRec(name='SoRec', seed=123)
+sorec = cornac.models.sorec.recom_sorec.SoRec(name='SoRec', seed=123) #not-working with current data format
 uknn = cornac.models.knn.recom_knn.UserKNN(name='UserKNN', seed=123)
 wmf = cornac.models.wmf.recom_wmf.WMF(name='WMF', seed=123)
 
 # In[ ]:
 
 models = [
-    c2pf, mter, pcrl, vaecf, cvae, gmf, ibpr, mcf, mlp, neumf, oibpr, vmf, cdr, coe, convmf, skmeans,
-    vbpr, cdl, hpf, efm, sbpr, hft, wbpr, ctr, bpr, ga, iknn, mf, mmmf, mp, nmf, pmf, svd, sorec, uknn, wmf 
+    vaecf, gmf, ibpr, mlp, neumf, oibpr, hpf, wbpr, bo, bpr, ga, iknn, mf, mmmf, mp, nmf, pmf, svd, uknn, wmf 
 ]
 
 cornac.Experiment(
