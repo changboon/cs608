@@ -54,7 +54,7 @@ f1 = cornac.metrics.FMeasure(k=50)
 #c2pf = cornac.models.c2pf.recom_c2pf.C2PF(name='C2PF') #not-working with current data format
 #mter = cornac.models.mter.recom_mter.MTER(name="MTER", seed=123) #not-working with current data format
 #pcrl = cornac.models.pcrl.recom_pcrl.PCRL(name="PCRL") #not-working with current data format
-vaecf = cornac.models.vaecf.recom_vaecf.VAECF(name="VAECF", seed=123)
+vaecf = cornac.models.vaecf.recom_vaecf.VAECF(name="VAECF", seed=123, use_gpu=True)
 #cvae = cornac.models.cvae.recom_cvae.CVAE(name='CVAE', seed=123) #not-working with current data format
 gmf = cornac.models.ncf.recom_gmf.GMF(name='GMF', seed=123)
 ibpr = cornac.models.ibpr.recom_ibpr.IBPR(name="IBPR")
@@ -75,7 +75,6 @@ hpf = cornac.models.hpf.recom_hpf.HPF(name="HPF")
 #hft = cornac.models.hft.recom_hft.HFT(name='HFT', seed=123) #not-working with current data format
 wbpr = cornac.models.bpr.recom_wbpr.WBPR(name='WBPR', seed=123)
 #ctr = cornac.models.ctr.recom_ctr.CTR(name='CTR', seed=123) #not-working with current data format
-bo = cornac.models.baseline_only.recom_bo(name='Baseline')
 bpr = cornac.models.bpr.recom_bpr.BPR(name='BPR', seed=123)
 ga = cornac.models.global_avg.recom_global_avg.GlobalAvg(name='GlobalAvg')
 iknn = cornac.models.knn.recom_knn.ItemKNN(name='ItemKNN', seed=123)
@@ -92,7 +91,7 @@ wmf = cornac.models.wmf.recom_wmf.WMF(name='WMF', seed=123)
 # In[ ]:
 
 models = [
-    vaecf, gmf, ibpr, mlp, neumf, oibpr, hpf, wbpr, bo, bpr, ga, iknn, mf, mmmf, mp, nmf, pmf, svd, uknn, wmf 
+    vaecf, gmf, ibpr, mlp, neumf, oibpr, hpf, wbpr, bpr, ga, iknn, mf, mmmf, mp, nmf, pmf, svd, uknn, wmf 
 ]
 
 cornac.Experiment(
