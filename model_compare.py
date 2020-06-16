@@ -99,7 +99,7 @@ cornac.Experiment(
   models=models,
   metrics=[mae, rmse, recall, ndcg, auc, mAP, f1],
   user_based=True,
-  save_dir="./model_compare/"
+  save_dir=GLOBAL_DIR
 ).run()
 
 
