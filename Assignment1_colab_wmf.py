@@ -4,8 +4,8 @@
 # In[1]:
 
 
-get_ipython().system('pip install cornac')
-get_ipython().system('pip install pandas')
+#get_ipython().system('pip install cornac')
+#get_ipython().system('pip install pandas')
 
 
 # In[4]:

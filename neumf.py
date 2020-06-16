@@ -50,17 +50,19 @@ f1 = cornac.metrics.FMeasure(k=50)
 # In[25]:
 
 
-nmf = cornac.models.ncf.recom_neumf.NeuMF(name='NeuMF', num_factors=8, layers=(64, 32, 16, 8), act_fn='relu', reg_layers=(0.0, 0.0, 0.0, 0.0), num_epochs=20, batch_size=256, num_neg=4, lr=0.001, learner='adam', early_stopping={'min_delta': 0.01, 'patience': 5}, trainable=True, verbose=False, seed=123)
+nmf = cornac.models.ncf.recom_neumf.NeuMF(name='NeuMF', layers=(64, 32, 16, 8), act_fn='relu', reg_layers=(0.0, 0.0, 0.0, 0.0), num_epochs=40, batch_size=256, learner='adam', early_stopping={'min_delta': 0.001, 'patience': 5}, trainable=True, verbose=False, seed=123)
 
 rs_nmf = RandomSearch(
     model=nmf,
     space=[
+        Discrete('num_factors', [4, 8, 16]),
+        Discrete('num_neg', [3,4,5]),
         Continuous("reg_mf", low=0, high=1e-1),
         Continuous("lr", low=1e-4, high=1e-2),
     ],
     metric=f1,
     eval_method=eval_method,
-    n_trails=30,
+    n_trails=60,
 )
 
 
@@ -104,4 +106,16 @@ with open("./nmf/submission.txt", "w") as f:
             last_ok = user
         except:
             f.write(" ".join([str(item_idx2id[rec]) for rec in rs_nmf.best_model.rank(last_ok)[0][0:50]]) + "\n")
+
+with open("./nmf/all.txt", "w") as f:
+    item_idx2id = list(rs_nmf.best_model.train_set.item_ids)
+    item_id2idx = rs_nmf.best_model.train_set.uid_map
+    last_ok = item_id2idx["1"]
+    for i in range(9402):
+        try:
+            user = item_id2idx[str(i+1)]
+            f.write(" ".join([str(item_idx2id[rec]) for rec in rs_nmf.best_model.rank(user)[0]]) + "\n")
+            last_ok = user
+        except:
+            f.write(" ".join([str(item_idx2id[rec]) for rec in rs_nmf.best_model.rank(last_ok)[0]]) + "\n")
 
