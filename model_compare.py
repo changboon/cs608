@@ -10,10 +10,11 @@ from cornac.eval_methods import BaseMethod
 from cornac.hyperopt import Discrete, Continuous
 from cornac.hyperopt import RandomSearch
 import random, math
+from custom_metric import HarmonicMean
 
 
 # In[21]:
-GLOBAL_DIR = "./model_compare/"
+GLOBAL_DIR = "./model_compare_hm/"
 
 
 random.seed(123)
@@ -43,9 +44,11 @@ rmse = cornac.metrics.RMSE()
 prec = cornac.metrics.Precision(k=50)
 recall = cornac.metrics.Recall(k=50)
 ndcg = cornac.metrics.NDCG(k=50)
+ncrr = cornac.metrics.NCRR(k=50)
 auc = cornac.metrics.AUC()
 mAP = cornac.metrics.MAP()
 f1 = cornac.metrics.FMeasure(k=50)
+hm = HarmonicMean(k=50)
 
 
 # In[25]:
@@ -77,7 +80,7 @@ wbpr = cornac.models.bpr.recom_wbpr.WBPR(name='WBPR', seed=123)
 #ctr = cornac.models.ctr.recom_ctr.CTR(name='CTR', seed=123) #not-working with current data format
 bpr = cornac.models.bpr.recom_bpr.BPR(name='BPR', seed=123)
 ga = cornac.models.global_avg.recom_global_avg.GlobalAvg(name='GlobalAvg')
-iknn = cornac.models.knn.recom_knn.ItemKNN(name='ItemKNN', seed=123)
+iknn = cornac.models.knn.recom_knn.ItemKNN(name='ItemKNN', seed=123, k=50, mean_centered=True)
 mf = cornac.models.mf.recom_mf.MF(name='MF', seed=123)
 mmmf = cornac.models.mmmf.recom_mmmf.MMMF(name='MMMF', seed=123)
 mp = cornac.models.most_pop.recom_most_pop.MostPop(name='MostPop')
@@ -97,7 +100,7 @@ models = [
 cornac.Experiment(
   eval_method=eval_method,
   models=models,
-  metrics=[mae, rmse, recall, ndcg, auc, mAP, f1],
+  metrics=[mae, rmse, recall, ndcg, ncrr, auc, mAP, f1, hm],
   user_based=True,
   save_dir=GLOBAL_DIR
 ).run()
@@ -133,15 +136,15 @@ for model in models:
             except:
                 f.write(" ".join([str(item_idx2id[rec]) for rec in model.rank(last_ok)[0][0:50]]) + "\n")
 
-    with open(LOCAL_DIR + "submission-all.txt", "w") as f:
+    with open(LOCAL_DIR + "submission-250.txt", "w") as f:
         item_idx2id = list(model.train_set.item_ids)
         item_id2idx = model.train_set.uid_map
         last_ok = item_id2idx["1"]
         for i in range(9402):
             try:
                 user = item_id2idx[str(i+1)]
-                f.write(" ".join([str(item_idx2id[rec]) for rec in model.rank(user)[0]]) + "\n")
+                f.write(" ".join([str(item_idx2id[rec]) for rec in model.rank(user)[0][0:250]]) + "\n")
                 last_ok = user
             except:
-                f.write(" ".join([str(item_idx2id[rec]) for rec in model.rank(last_ok)[0]]) + "\n")
+                f.write(" ".join([str(item_idx2id[rec]) for rec in model.rank(last_ok)[0][0:250]]) + "\n")
 
