@@ -18,9 +18,9 @@ GLOBAL_DIR = "./vaecf-final/"
 LOAD_DIR = "./vaecf-hm1-ae20/"
 
 random.seed(123)
-data = cornac.data.Reader(bin_threshold=1.0, min_user_freq=5).read(fpath='./cs608_ip_stu_v2.csv', sep=",", fmt='UIR', skip_lines=1)
+data = cornac.data.Reader(bin_threshold=1.0, min_user_freq=10).read(fpath='./cs608_ip_stu_v2.csv', sep=",", fmt='UIR', skip_lines=1)
 
-ratio_split = cornac.eval_methods.RatioSplit(data=train, test_size=0.1, rating_threshold=0.5, seed=123)
+ratio_split = cornac.eval_methods.RatioSplit(data=data, test_size=0.1, rating_threshold=0.5, seed=123, verbose=True)
 
 cv = cornac.eval_methods.cross_validation.CrossValidation(
     data, n_folds=3, rating_threshold=0.5, seed=123, exclude_unknowns=True, verbose=True)
@@ -44,7 +44,7 @@ hm = HarmonicMean(k=50)
 
 # In[25]:
 
-best_params = pickle.load( open( GLOBL + "best_params.pkl", "rb" ) )
+best_params = pickle.load( open( LOAD_DIR + "best_params.pkl", "rb" ) )
 vaecf = cornac.models.vaecf.recom_vaecf.VAECF(
     name='VAECF', 
     autoencoder_structure=[20], 
@@ -65,16 +65,15 @@ mp = cornac.models.most_pop.recom_most_pop.MostPop(name='MostPop')
 
 
 cornac.Experiment(
-  eval_method=eval_method,
+  eval_method=ratio_split,
   models=[vaecf, mp],
   metrics=[mae, rmse, recall25, recall50, ndcg, ncrr, auc, mAP, f1, hm],
   user_based=True,
-  save_dir=GLOBAL_DIR,
+  #save_dir=GLOBAL_DIR,
 ).run()
 
 
 # In[ ]:
-
 
 saved_path = vaecf.save(GLOBAL_DIR)
 item_idx2id = list(vaecf.train_set.item_ids)
@@ -107,7 +106,7 @@ with open(GLOBAL_DIR + "submission.txt", "w") as f:
         except:
             f.write(" ".join([str(mp_item_idx2id[rec]) for rec in mp.rank(1)[0][0:50]]) + "\n")
 
-with open(GLOBAL_DIR + "-250.txt", "w") as f:
+with open(GLOBAL_DIR + "submission-250.txt", "w") as f:
     for i in range(9402):
         try:
             user = item_id2idx[str(i+1)]

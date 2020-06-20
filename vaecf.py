@@ -117,7 +117,7 @@ with open(GLOBAL_DIR + "submission.txt", "w") as f:
         except:
             f.write(" ".join([str(item_idx2id[rec]) for rec in rs.best_model.rank(last_ok)[0][0:50]]) + "\n")
 
-with open(GLOBAL_DIR + "-250.txt", "w") as f:
+with open(GLOBAL_DIR + "submission-250.txt", "w") as f:
     item_idx2id = list(rs.best_model.train_set.item_ids)
     item_id2idx = rs.best_model.train_set.uid_map
     last_ok = item_id2idx["1"]
