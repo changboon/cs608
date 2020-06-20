@@ -10,9 +10,12 @@ from cornac.eval_methods import BaseMethod
 from cornac.hyperopt import Discrete, Continuous
 from cornac.hyperopt import RandomSearch
 import random, math
+from custom_metric import HarmonicMean
 
 
 # In[21]:
+
+GLOBAL_DIR = "./wmf-hm/"
 
 
 random.seed(123)
@@ -42,9 +45,11 @@ rmse = cornac.metrics.RMSE()
 prec = cornac.metrics.Precision(k=50)
 recall = cornac.metrics.Recall(k=50)
 ndcg = cornac.metrics.NDCG(k=50)
+ncrr = cornac.metrics.NCRR(k=50)
 auc = cornac.metrics.AUC()
 mAP = cornac.metrics.MAP()
 f1 = cornac.metrics.FMeasure(k=50)
+hm = HarmonicMean(k=50)
 
 
 # In[25]:
@@ -52,19 +57,19 @@ f1 = cornac.metrics.FMeasure(k=50)
 
 wmf = cornac.models.WMF(max_iter=100, verbose=False, seed=123)
 
-rs_wmf = RandomSearch(
+rs = RandomSearch(
     model=wmf,
     space=[
-        Discrete("k", [10, 15, 30, 50]),
+        Discrete("k", [10, 15, 30, 50, 100]),
         Continuous("lambda_u", low=1e-4, high=1e-1),
         Continuous("lambda_v", low=1e-4, high=1e-1),
         Continuous("learning_rate", low=1e-3, high=1e-1),
-        Continuous('a', low=0.8, high=1.4),
+        Continuous('a', low=0.8, high=1.2),
         Continuous('b', low=0.0, high=2e-1),
     ],
-    metric=f1,
+    metric=hm,
     eval_method=eval_method,
-    n_trails=30,
+    n_trails=150,
 )
 
 
@@ -73,9 +78,10 @@ rs_wmf = RandomSearch(
 
 cornac.Experiment(
   eval_method=eval_method,
-  models=[rs_wmf],
-  metrics=[mae, rmse, recall, ndcg, auc, mAP, f1],
-  user_based=True
+  models=[rs],
+  metrics=[mae, rmse, recall, ndcg, ncrr, auc, mAP, f1, hm],
+  user_based=True,
+  save_dir=GLOBAL_DIR
 ).run()
 
 
@@ -83,29 +89,40 @@ cornac.Experiment(
 
 
 import pickle
-saved_path = rs_wmf.best_model.save('./wmf/')
-item_idx2id = list(rs_wmf.best_model.train_set.item_ids)
-item_id2idx = rs_wmf.best_model.train_set.uid_map
+saved_path = rs.best_model.save(GLOBAL_DIR)
+item_idx2id = list(rs.best_model.train_set.item_ids)
+item_id2idx = rs.best_model.train_set.uid_map
 mapping = {
     'item_idx2id': item_idx2id,
     'item_id2idx': item_id2idx,
 }
 
-pickle.dump( mapping, open( "./wmf/mapping.pkl", "wb" ) )
+pickle.dump( mapping, open( GLOBAL_DIR + "mapping.pkl", "wb" ) )
 
 
 # In[18]:
 
 
-with open("./wmf/submission.txt", "w") as f:
-    item_idx2id = list(rs_wmf.best_model.train_set.item_ids)
-    item_id2idx = rs_wmf.best_model.train_set.uid_map
+with open(GLOBAL_DIR + "submission.txt", "w") as f:
+    item_idx2id = list(rs.best_model.train_set.item_ids)
+    item_id2idx = rs.best_model.train_set.uid_map
     last_ok = item_id2idx["1"]
     for i in range(9402):
         try:
             user = item_id2idx[str(i+1)]
-            f.write(" ".join([str(item_idx2id[rec]) for rec in rs_wmf.best_model.rank(user)[0][0:50]]) + "\n")
+            f.write(" ".join([str(item_idx2id[rec]) for rec in rs.best_model.rank(user)[0][0:50]]) + "\n")
             last_ok = user
         except:
-            f.write(" ".join([str(item_idx2id[rec]) for rec in rs_wmf.best_model.rank(last_ok)[0][0:50]]) + "\n")
+            f.write(" ".join([str(item_idx2id[rec]) for rec in rs.best_model.rank(last_ok)[0][0:50]]) + "\n")
 
+with open(GLOBAL_DIR + "submission-250.txt", "w") as f:
+    item_idx2id = list(rs.best_model.train_set.item_ids)
+    item_id2idx = rs.best_model.train_set.uid_map
+    last_ok = item_id2idx["1"]
+    for i in range(9402):
+        try:
+            user = item_id2idx[str(i+1)]
+            f.write(" ".join([str(item_idx2id[rec]) for rec in rs.best_model.rank(user)[0][0:250]]) + "\n")
+            last_ok = user
+        except:
+            f.write(" ".join([str(item_idx2id[rec]) for rec in rs.best_model.rank(last_ok)[0][0:250]]) + "\n")

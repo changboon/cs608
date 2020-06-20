@@ -14,17 +14,17 @@ from custom_metric import HarmonicMean
 
 
 # In[21]:
-GLOBAL_DIR = "./model_compare_hm/"
+GLOBAL_DIR = "./model_compare_hm1/"
 
 
 random.seed(123)
-data = cornac.data.Reader().read(fpath='./cs608_ip_train_v2.csv', sep=",", fmt='UIR', skip_lines=1)
+data = cornac.data.Reader(bin_threshold=1.0).read(fpath='./cs608_ip_train_v2.csv', sep=",", fmt='UIR', skip_lines=1)
 random.shuffle(data)
 
 train = data[math.ceil(0.2*len(data)):]
 test = data[:math.ceil(0.2*len(data))]
 
-holdout = cornac.data.Reader().read(fpath='./cs608_ip_probe_v2.csv', sep=",", fmt='UIR', skip_lines=1)
+holdout = cornac.data.Reader(bin_threshold=1.0).read(fpath='./cs608_ip_probe_v2.csv', sep=",", fmt='UIR', skip_lines=1)
 
 ratio_split = cornac.eval_methods.RatioSplit(data=train, test_size=0.2, rating_threshold=1.0, seed=123)
 

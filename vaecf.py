@@ -14,18 +14,18 @@ from custom_metric import HarmonicMean
 
 
 # In[21]:
-GLOBAL_DIR = "./vaecf/"
+GLOBAL_DIR = "./vaecf-hm1-ae20/"
 
 random.seed(123)
-data = cornac.data.Reader().read(fpath='./cs608_ip_train_v2.csv', sep=",", fmt='UIR', skip_lines=1)
+data = cornac.data.Reader(bin_threshold=1.0, min_user_freq=5).read(fpath='./cs608_ip_train_v2.csv', sep=",", fmt='UIR', skip_lines=1)
 random.shuffle(data)
 
 train = data[math.ceil(0.2*len(data)):]
 test = data[:math.ceil(0.2*len(data))]
 
-holdout = cornac.data.Reader().read(fpath='./cs608_ip_probe_v2.csv', sep=",", fmt='UIR', skip_lines=1)
+holdout = cornac.data.Reader(bin_threshold=1.0).read(fpath='./cs608_ip_probe_v2.csv', sep=",", fmt='UIR', skip_lines=1)
 
-ratio_split = cornac.eval_methods.RatioSplit(data=train, test_size=0.2, rating_threshold=1.0, seed=123)
+ratio_split = cornac.eval_methods.RatioSplit(data=train, test_size=0.2, rating_threshold=0.5, seed=123)
 
 eval_method = BaseMethod.from_splits(
     train_data=train,  test_data=test, val_data=holdout, exclude_unknowns=True, verbose=True, seed=123
@@ -41,7 +41,8 @@ cv = cornac.eval_methods.cross_validation.CrossValidation(
 mae = cornac.metrics.MAE()
 rmse = cornac.metrics.RMSE()
 prec = cornac.metrics.Precision(k=50)
-recall = cornac.metrics.Recall(k=50)
+recall25 = cornac.metrics.Recall(k=25)
+recall50 = cornac.metrics.Recall(k=50)
 ndcg = cornac.metrics.NDCG(k=50)
 ncrr = cornac.metrics.NCRR(k=50)
 auc = cornac.metrics.AUC()
@@ -57,15 +58,16 @@ vaecf = cornac.models.vaecf.recom_vaecf.VAECF(name='VAECF', autoencoder_structur
 rs = RandomSearch(
     model=vaecf,
     space=[
-        Discrete('k', [8, 10, 15]),
-        Discrete('act_fn', ['tanh','relu','relu6']),
-        Discrete('likelihood', ['mult','bern','gaus']),
-        Continuous("beta", low=0.8, high=1.3),
-        Continuous("learning_rate", low=1e-4, high=1e-2),
+        Discrete('k', [10, 15, 20, 30, 40]),
+        Discrete('act_fn', ['tanh', 'relu', 'elu']),
+        Discrete('n_epochs', [20,50,100]),
+        Continuous("beta", low=0.4, high=1.8),
+        Continuous("learning_rate", low=1e-3, high=3e-1),
+        
     ],
     metric=hm,
     eval_method=eval_method,
-    n_trails=100,
+    n_trails=50,
 )
 
 
@@ -75,7 +77,7 @@ rs = RandomSearch(
 cornac.Experiment(
   eval_method=eval_method,
   models=[rs],
-  metrics=[mae, rmse, recall, ndcg, ncrr, auc, mAP, f1, hm],
+  metrics=[mae, rmse, recall25, recall50, ndcg, ncrr, auc, mAP, f1, hm],
   user_based=True,
   save_dir=GLOBAL_DIR,
 ).run()
@@ -93,7 +95,11 @@ mapping = {
     'item_id2idx': item_id2idx,
 }
 
+pickle.dump( rs.best_params, open( GLOBAL_DIR + "best_params.pkl", "wb" ) )
+
 pickle.dump( mapping, open( GLOBAL_DIR + "mapping.pkl", "wb" ) )
+pickle.dump( rs.best_model, open( GLOBAL_DIR + "model.pkl", "wb" ) )
+
 
 
 # In[18]:
